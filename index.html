@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GutachterPro — Gutachterliche Beantwortung</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <div class="logo">GutachterPro</div>
+      <span class="sep">·</span>
+      <span class="meta">Az. 2024-LG-087</span>
+      <span class="sep">·</span>
+      <span class="meta dimmed">A-Beweisbeschluss.pdf · 3 OH 19/19</span>
+    </div>
+    <div class="topbar-right">
+      <span class="badge badge-live">Aktiv</span>
+      <span class="badge badge-prog" id="top-prog">BB 2 · Frage 2.1</span>
+      <button class="btn-save" onclick="showSaveToast()">Speichern</button>
+    </div>
+  </div>
+</header>
+
+<!-- STEPPER -->
+<div class="stepper-bar">
+  <div class="stepper-inner">
+    <div class="step done">
+      <div class="step-circle done">✓</div>
+      <span class="step-label">Titelblatt</span>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done">
+      <div class="step-circle done">✓</div>
+      <span class="step-label">Allgemeine Angaben</span>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-circle active">3</div>
+      <span class="step-label">Gutachterliche Beantwortung</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-circle">4</div>
+      <span class="step-label">Zusammenfassung</span>
+    </div>
+  </div>
+</div>
+
+<!-- BB NAV -->
+<div class="bb-nav" id="bb-nav"></div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- LEFT: CONTENT -->
+  <div class="content-col">
+    <div class="content-scroll" id="content-scroll">
+
+      <!-- Frage Header -->
+      <div class="q-header card" id="q-header"></div>
+
+      <!-- Abschnitt 1 -->
+      <div class="section-card card">
+        <div class="section-head">
+          <span class="section-num" id="snum1"></span>
+          <span class="section-title">Feststellungen aus den Unterlagen</span>
+          <span class="section-status" id="sst1">Offen</span>
+        </div>
+        <div class="section-body">
+          <div class="voice-row">
+            <button class="btn-voice" id="vb1" onclick="startVoice(1)">
+              <svg width="13" height="13" viewBox="0 0 13 13"><rect x="4" y="1" width="5" height="6.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5a5 5 0 0010 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="11.5" x2="6.5" y2="12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              <span id="vl1">Diktieren</span>
+            </button>
+            <span class="voice-hint">KI formuliert automatisch aus Ihrer Aufnahme</span>
+          </div>
+          <div class="ai-indicator" id="ai1">
+            <span class="ai-dot"></span> KI formuliert Feststellung…
+          </div>
+          <textarea class="ta" id="ta1" rows="4" placeholder="Feststellungen aus den vorliegenden Unterlagen…"></textarea>
+        </div>
+      </div>
+
+      <!-- Abschnitt 2 -->
+      <div class="section-card card">
+        <div class="section-head">
+          <span class="section-num" id="snum2"></span>
+          <span class="section-title">Feststellungen am Ortstermin</span>
+          <span class="section-status" id="sst2">Offen</span>
+        </div>
+        <div class="section-body">
+          <div class="voice-row">
+            <button class="btn-voice" id="vb2" onclick="startVoice(2)">
+              <svg width="13" height="13" viewBox="0 0 13 13"><rect x="4" y="1" width="5" height="6.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5a5 5 0 0010 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="11.5" x2="6.5" y2="12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              <span id="vl2">Diktieren</span>
+            </button>
+            <button class="btn-foto" onclick="addFoto()">
+              <svg width="13" height="13" viewBox="0 0 13 13"><rect x="1" y="3.5" width="11" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="6.5" cy="7.5" r="2" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M4.5 3.5l.8-1.5h2.4l.8 1.5" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+              Foto hinzufügen
+            </button>
+            <span class="voice-hint">Diktat + Fotos werden automatisch zusammengeführt</span>
+          </div>
+          <div class="ai-indicator" id="ai2">
+            <span class="ai-dot"></span> KI formuliert Ortstermin-Feststellung…
+          </div>
+          <textarea class="ta" id="ta2" rows="4" placeholder="Befunde vom Ortstermin, Messungen, Beobachtungen…"></textarea>
+          <div class="foto-strip" id="foto-strip"></div>
+        </div>
+      </div>
+
+      <!-- Abschnitt 3 -->
+      <div class="section-card card">
+        <div class="section-head">
+          <span class="section-num" id="snum3"></span>
+          <span class="section-title">Gutachterliche Beurteilung</span>
+          <span class="section-status" id="sst3">Offen</span>
+        </div>
+        <div class="section-body">
+          <div class="voice-row">
+            <button class="btn-voice" id="vb3" onclick="startVoice(3)">
+              <svg width="13" height="13" viewBox="0 0 13 13"><rect x="4" y="1" width="5" height="6.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5a5 5 0 0010 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="11.5" x2="6.5" y2="12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              <span id="vl3">Diktieren</span>
+            </button>
+            <span class="voice-hint">KI ergänzt automatisch passende Norm-Referenzen</span>
+          </div>
+          <div class="ai-indicator" id="ai3">
+            <span class="ai-dot"></span> KI formuliert Beurteilung mit Norm-Referenzen…
+          </div>
+          <textarea class="ta" id="ta3" rows="4" placeholder="Gutachterliche Einschätzung, Mangelbewertung, Empfehlungen…"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NAV FOOTER -->
+    <div class="nav-footer">
+      <button class="btn-prev" onclick="prevQ()">← Zurück</button>
+      <button class="btn-next" onclick="nextQ()">Nächste Frage →</button>
+      <span class="nav-pos" id="nav-pos"></span>
+    </div>
+  </div>
+
+  <!-- RIGHT: NORM SIDEBAR -->
+  <aside class="norm-sidebar">
+    <div class="ns-head">
+      <div class="ns-label">Norm-Vorschläge</div>
+      <div class="ns-sub" id="ns-sub">Passend zur aktuellen Frage</div>
+    </div>
+    <div class="ns-body" id="ns-body"></div>
+  </aside>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Gespeichert ✓</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
