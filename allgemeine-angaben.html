@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GutachterPro — Allgemeine Angaben</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    .page-wrap {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      background: #1a1a18;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 220px;
+      z-index: 100;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-logo svg { flex-shrink: 0; }
+    .sidebar-logo-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      position: relative;
+    }
+    .sidebar-nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .sidebar-nav-item.active { color: #1D9E75; background: rgba(29,158,117,0.12); }
+    .sidebar-nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: #1D9E75;
+    }
+    .sidebar-badge {
+      margin-left: auto;
+      background: #1D9E75;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+    .sidebar-bottom {
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+    .user-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(29,158,117,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 600;
+      color: #1D9E75;
+      flex-shrink: 0;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 220px;
+      min-height: 100vh;
+      background: #f5f4f0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding: 0 24px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #5a5a56;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.08);
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .topbar-back:hover { background: #f5f4f0; }
+    .topbar-title { font-size: 13px; font-weight: 500; color: #1a1a18; }
+    .topbar-sub { font-size: 12px; color: #9a9a94; }
+    .topbar-sep { color: rgba(0,0,0,0.2); }
+    .topbar-progress { margin-left: auto; font-size: 11px; color: #9a9a94; font-family: 'DM Mono', monospace; }
+
+    /* ── STEPPER ── */
+    .stepper {
+      background: #fff;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+    }
+    .step { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+    .step-circle {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 500;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .step-circle.done { background: #1D9E75; color: #fff; }
+    .step-circle.active { background: #1D9E75; color: #fff; box-shadow: 0 0 0 3px #9FE1CB; }
+    .step-circle.pending { background: #f0efeb; color: #9a9a94; border: 1px solid rgba(0,0,0,0.1); }
+    .step-label { font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .step-label.done { color: #1D9E75; }
+    .step-label.active { color: #0F6E56; }
+    .step-label.pending { color: #9a9a94; }
+    .step-line { flex: 1; height: 1px; background: rgba(0,0,0,0.1); margin: 0 10px; min-width: 20px; }
+    .step-line.done { background: #9FE1CB; }
+
+    /* ── CONTENT ── */
+    .content {
+      flex: 1;
+      padding: 24px;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .section-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      font-size: 12px;
+      font-weight: 600;
+      color: #5a5a56;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #f8f7f4;
+    }
+    .section-body { padding: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid.single { grid-template-columns: 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #1a1a18;
+    }
+    .form-sublabel { font-size: 11px; color: #9a9a94; margin-top: -3px; }
+    .form-input {
+      background: #f8f7f4;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a18;
+      transition: border-color 0.15s, background 0.15s;
+      outline: none;
+    }
+    .form-input:focus { border-color: #1D9E75; background: #fff; }
+    .form-input::placeholder { color: #b0afaa; }
+    .form-textarea {
+      background: #f8f7f4;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a18;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.15s, background 0.15s;
+      outline: none;
+      line-height: 1.6;
+    }
+    .form-textarea:focus { border-color: #1D9E75; background: #fff; }
+    .form-textarea::placeholder { color: #b0afaa; }
+    .form-date {
+      background: #f8f7f4;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a18;
+      transition: border-color 0.15s;
+      outline: none;
+      max-width: 200px;
+    }
+    .form-date:focus { border-color: #1D9E75; background: #fff; }
+
+    /* ── BILDER ── */
+    .bilder-box {
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .bilder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      background: #f8f7f4;
+    }
+    .bilder-title { font-size: 12px; font-weight: 500; color: #5a5a56; }
+    .btn-bild {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a18;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-bild:hover { background: #f0efeb; }
+    .bilder-empty {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: #9a9a94;
+    }
+    .bilder-empty-icon { opacity: 0.4; }
+    .bilder-empty-text { font-size: 13px; }
+    .bilder-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px;
+    }
+    .bild-thumb {
+      width: 80px;
+      height: 80px;
+      background: #f0efeb;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .bild-thumb:hover { border-color: #1D9E75; }
+    .bild-remove {
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 16px; height: 16px;
+      background: rgba(163,45,45,0.9);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s;
+      font-size: 10px;
+      color: #fff;
+      font-weight: 600;
+    }
+    .bild-thumb:hover .bild-remove { opacity: 1; }
+    #file-input { display: none; }
+
+    /* ── FOOTER NAV ── */
+    .footer-nav {
+      background: #fff;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      bottom: 0;
+    }
+    .btn-back {
+      background: #f0efeb;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      color: #5a5a56;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .btn-back:hover { background: #e8e7e2; }
+    .btn-weiter {
+      background: #1D9E75;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-left: auto;
+    }
+    .btn-weiter:hover { background: #0F6E56; }
+    .progress-text { font-size: 11px; color: #9a9a94; font-family: 'DM Mono', monospace; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 72px;
+      right: 24px;
+      background: #1a1a18;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 16px;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 9999;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="16" height="16" rx="4" fill="#1D9E75"/>
+        <path d="M6 10l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="sidebar-logo-text">Gutachten Assistent</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item active" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5 8h6M5 5.5h6M5 10.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Beweisbeschlüsse
+        <span class="sidebar-badge">2</span>
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Gutachten
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7h6M5 10h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Arbeitsbereich
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Warteliste
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar">BD</div>
+        <span>b.duezguen@intersignum.com</span>
+      </div>
+      <a class="sidebar-nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.54 11.54l1.41 1.41M3.05 12.95l1.42-1.42M11.54 4.46l1.41-1.41" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Einstellungen
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3h3a1 1 0 011 1v8a1 1 0 01-1 1h-3M7 11l4-3-4-3M2 8h9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Abmelden
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <a class="topbar-back" href="#">
+        <svg width="12" height="12" viewBox="0 0 12 12"><path d="M7 2L3 6l4 4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Zurück
+      </a>
+      <span class="topbar-title">Gutachten erstellen</span>
+      <span class="topbar-sep">·</span>
+      <span class="topbar-sub">B-Beweisbeschluss200.pdf · 3 OH 1/20</span>
+      <span class="topbar-progress" id="progress-label">0%</span>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step">
+        <div class="step-circle done">✓</div>
+        <span class="step-label done">Titelblatt</span>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step">
+        <div class="step-circle active">2</div>
+        <span class="step-label active">1. Allgemeine Angaben</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle pending">3</div>
+        <span class="step-label pending">2. Gutachterliche Beantwortung der Beweisfragen</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle pending">4</div>
+        <span class="step-label pending">3. Zusammenfassung</span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- Auftragsdetails -->
+      <div class="section-card">
+        <div class="section-header">Auftragsdetails und Grundlagen der Begutachtung</div>
+        <div class="section-body">
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label class="form-label">Auftrag / Datum / Auftragserteilung</label>
+              <input type="date" class="form-date" id="auftrag-datum" onchange="updateProgress()">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Auftraggeber</label>
+              <input type="text" class="form-input" id="auftraggeber" value="Landgericht Rottweil" placeholder="Auftraggeber eingeben" onchange="updateProgress()">
+              <span class="form-sublabel">Wer hat das Gutachten in Auftrag gegeben?</span>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Vorgang Prozessvertreter Kläger / Antragsteller</label>
+              <input type="text" class="form-input" id="vorgang" placeholder="Vorgang eingeben" onchange="updateProgress()">
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Gegenstand des Gutachtens</label>
+              <textarea class="form-textarea" id="gegenstand" rows="4" placeholder="Beschreiben Sie den Gegenstand des Gutachtens..." onchange="updateProgress()"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Datum des Beweisbeschlusses</label>
+              <input type="date" class="form-date" id="bb-datum" onchange="updateProgress()">
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Fragen des Beweisbeschlusses</label>
+              <textarea class="form-textarea" id="bb-fragen" rows="5" placeholder="1. Es zeigen sich an mehreren Stellen des Gebäudes Risse an den Innen- und Außenwänden, nämlich&#10;a) Im Dachgeschoss in den Schrägen,&#10;b) Im Schlafzimmer horizontal über der Tür..." onchange="updateProgress()"></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Verwendete Unterlagen</label>
+              <textarea class="form-textarea" id="unterlagen" rows="3" placeholder="Verwendete Unterlagen aufführen..." onchange="updateProgress()"></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Technische Regelwerke</label>
+              <textarea class="form-textarea" id="regelwerke" rows="3" placeholder="Relevante DIN-Normen, VOB, technische Regelwerke..." onchange="updateProgress()"></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Hinweis Planung und Kostenschätzung</label>
+              <textarea class="form-textarea" id="kostenhinweis" rows="3" placeholder="Hinweise zur Planung und Kostenschätzung..." onchange="updateProgress()"></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Ortstermin</label>
+              <textarea class="form-textarea" id="ortstermin" rows="3" placeholder="Angaben zum Ortstermin (Datum, Teilnehmer, Besonderheiten)..." onchange="updateProgress()"></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Gegenstand der Begutachtung</label>
+              <textarea class="form-textarea" id="gegenstand-begutachtung" rows="3" placeholder="Gegenstand der Begutachtung..." onchange="updateProgress()"></textarea>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Bilder -->
+      <div class="section-card">
+        <div class="bilder-header">
+          <span class="bilder-title" id="bilder-title">Bilder (0 / 5)</span>
+          <button class="btn-bild" onclick="document.getElementById('file-input').click()">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="6.5" cy="7" r="2" stroke="currentColor" stroke-width="1.1"/><path d="M4.5 3l.8-1.5h2.4L8.5 3" stroke="currentColor" stroke-width="1"/></svg>
+            Bild hinzufügen
+          </button>
+        </div>
+        <div id="bilder-container">
+          <div class="bilder-empty" id="bilder-empty">
+            <svg class="bilder-empty-icon" width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="3" stroke="#9a9a94" stroke-width="1.5"/><circle cx="14" cy="17" r="3" stroke="#9a9a94" stroke-width="1.5"/><path d="M4 28l9-7 6 5 5-4 8 7" stroke="#9a9a94" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="bilder-empty-text">Noch keine Bilder hinzugefügt</span>
+          </div>
+          <div class="bilder-grid" id="bilder-grid" style="display:none"></div>
+        </div>
+        <input type="file" id="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+      </div>
+
+    </div>
+
+    <!-- FOOTER NAV -->
+    <div class="footer-nav">
+      <a class="btn-back" href="#">← Zurück</a>
+      <span class="progress-text" id="footer-progress">0 von 11 Feldern ausgefüllt</span>
+      <button class="btn-weiter" onclick="goToNext()">Weiter →</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const fields = ['auftrag-datum','auftraggeber','vorgang','gegenstand','bb-datum','bb-fragen','unterlagen','regelwerke','kostenhinweis','ortstermin','gegenstand-begutachtung'];
+let bildCount = 0;
+
+function updateProgress() {
+  const filled = fields.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  }).length;
+  const pct = Math.round((filled / fields.length) * 100);
+  document.getElementById('progress-label').textContent = pct + '%';
+  document.getElementById('footer-progress').textContent = filled + ' von ' + fields.length + ' Feldern ausgefüllt';
+}
+
+function handleFiles(files) {
+  const MAX = 5;
+  Array.from(files).forEach(file => {
+    if (bildCount >= MAX) { showToast('Maximal 5 Bilder erlaubt'); return; }
+    const reader = new FileReader();
+    reader.onload = e => addBildThumb(e.target.result, file.name);
+    reader.readAsDataURL(file);
+  });
+}
+
+function addBildThumb(src, name) {
+  if (bildCount >= 5) return;
+  bildCount++;
+  document.getElementById('bilder-empty').style.display = 'none';
+  document.getElementById('bilder-grid').style.display = 'flex';
+  document.getElementById('bilder-title').textContent = `Bilder (${bildCount} / 5)`;
+
+  const thumb = document.createElement('div');
+  thumb.className = 'bild-thumb';
+  thumb.id = 'thumb-' + bildCount;
+  thumb.innerHTML = `
+    <img src="${src}" style="width:100%;height:100%;object-fit:cover;">
+    <div class="bild-remove" onclick="removeBild(this.parentElement)">✕</div>
+  `;
+  document.getElementById('bilder-grid').appendChild(thumb);
+  updateProgress();
+}
+
+function removeBild(thumb) {
+  thumb.remove();
+  bildCount--;
+  document.getElementById('bilder-title').textContent = `Bilder (${bildCount} / 5)`;
+  if (bildCount === 0) {
+    document.getElementById('bilder-empty').style.display = 'flex';
+    document.getElementById('bilder-grid').style.display = 'none';
+  }
+  updateProgress();
+}
+
+function goToNext() {
+  const filled = fields.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  }).length;
+  if (filled < 3) {
+    showToast('Bitte füllen Sie mindestens die Pflichtfelder aus');
+    return;
+  }
+  showToast('Weiter zur Gutachterlichen Beantwortung...');
+  setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Init
+document.getElementById('auftraggeber').value = 'Landgericht Rottweil';
+document.getElementById('bb-fragen').value = '1. Es zeigen sich an mehreren Stellen des Gebäudes Risse an den Innen- und Außenwänden, nämlich\na) Im Dachgeschoss in den Schrägen,\nb) Im Schlafzimmer horizontal über der Tür senkrecht am Lichtschalter neben der Tür,\nc) Im Bad waagerecht in Höhe des Abluftstellers,\nd) Im Übergang von der Küche zum Esszimmer ein langer Riss an der Wand innen und analog verlaufend auch außen,';
+updateProgress();
+</script>
+</body>
+</html>
