@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GutachterPro — Titelblatt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #1D9E75; --green-l: #E1F5EE; --green-m: #9FE1CB; --green-d: #0F6E56;
+      --dark: #1a1a18; --gray: #5a5a56; --light: #f5f4f0;
+      --border: rgba(0,0,0,0.08); --surface: #fff;
+    }
+    html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--light); color: var(--dark); font-size: 14px; }
+
+    .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { background: #1a1a18; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; width: 220px; z-index: 100; }
+    .sb-logo { display: flex; align-items: center; gap: 8px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sb-logo-text { font-size: 13px; font-weight: 500; color: #fff; }
+    .sb-nav { flex: 1; padding: 10px 0; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(255,255,255,0.5); cursor: pointer; transition: all .15s; text-decoration: none; position: relative; }
+    .sb-item:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+    .sb-item.active { color: var(--green); background: rgba(29,158,117,0.1); }
+    .sb-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--green); }
+    .sb-badge { margin-left: auto; background: var(--green); color: #fff; font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 10px; }
+    .sb-bottom { padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    .sb-user { display: flex; align-items: center; gap: 8px; padding: 8px 20px; font-size: 11px; color: rgba(255,255,255,0.35); }
+    .sb-avatar { width: 24px; height: 24px; border-radius: 50%; background: rgba(29,158,117,0.25); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: var(--green); flex-shrink: 0; }
+
+    /* MAIN */
+    .main { margin-left: 220px; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* TOPBAR */
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 46px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 50; }
+    .tb-back { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--gray); cursor: pointer; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; transition: background .15s; }
+    .tb-back:hover { background: var(--light); }
+    .tb-title { font-size: 13px; font-weight: 500; }
+    .tb-sub { font-size: 12px; color: #9a9a94; }
+    .tb-sep { color: rgba(0,0,0,0.2); }
+    .tb-saved { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--green); }
+
+    /* STEPPER */
+    .stepper { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; }
+    .step { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .sc { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+    .sc-done { background: var(--green); color: #fff; }
+    .sc-active { background: var(--green); color: #fff; box-shadow: 0 0 0 3px var(--green-m); }
+    .sc-open { background: #f0efeb; color: #9a9a94; border: 1px solid var(--border); }
+    .sl { font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .sl-done { color: var(--green); }
+    .sl-active { color: var(--green-d); }
+    .sl-open { color: #9a9a94; }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 10px; min-width: 16px; }
+    .step-line.done { background: var(--green-m); }
+
+    /* CONTENT */
+    .content { flex: 1; padding: 24px; max-width: 900px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .card-head { padding: 11px 20px; border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: .6px; background: #f8f7f4; }
+    .card-body { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .card-body.single { grid-template-columns: 1fr; }
+
+    .fg { display: flex; flex-direction: column; gap: 5px; }
+    .fg.full { grid-column: 1 / -1; }
+    .fg.third { grid-column: span 1; }
+    .fl { font-size: 12px; font-weight: 500; color: var(--dark); }
+    .fi { background: #f8f7f4; border: 1px solid rgba(0,0,0,0.09); border-radius: 7px; padding: 8px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--dark); outline: none; transition: border-color .15s, background .15s; }
+    .fi:focus { border-color: var(--green); background: #fff; }
+    .fi::placeholder { color: #c0bfba; }
+    .ft { background: #f8f7f4; border: 1px solid rgba(0,0,0,0.09); border-radius: 7px; padding: 8px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--dark); resize: vertical; outline: none; transition: border-color .15s, background .15s; line-height: 1.6; min-height: 80px; }
+    .ft:focus { border-color: var(--green); background: #fff; }
+    .ft::placeholder { color: #c0bfba; }
+
+    /* PROGRESS BAR */
+    .progress-wrap { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 24px; display: flex; align-items: center; gap: 12px; }
+    .progress-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .4s; width: 0%; }
+    .progress-label { font-size: 11px; color: #9a9a94; font-family: 'DM Mono', monospace; white-space: nowrap; }
+
+    /* FOOTER */
+    .footer { background: var(--surface); border-top: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; gap: 10px; position: sticky; bottom: 0; }
+    .btn-back { background: #f0efeb; border: 1px solid var(--border); border-radius: 7px; padding: 8px 16px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--gray); cursor: pointer; text-decoration: none; transition: background .15s; }
+    .btn-back:hover { background: #e8e7e2; }
+    .btn-next { background: var(--green); border: none; border-radius: 7px; padding: 8px 20px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; color: #fff; cursor: pointer; margin-left: auto; transition: background .15s; }
+    .btn-next:hover { background: var(--green-d); }
+    .fp { font-size: 11px; color: #9a9a94; font-family: 'DM Mono', monospace; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 70px; right: 24px; background: var(--dark); color: #fff; font-size: 12px; font-weight: 500; padding: 10px 16px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none; z-index: 9999; font-family: 'DM Sans', sans-serif; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <svg width="20" height="20" viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="5" fill="#1D9E75"/><path d="M6 10l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <span class="sb-logo-text">Gutachten Assistent</span>
+    </div>
+    <nav class="sb-nav">
+      <a class="sb-item active" href="#">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 7.5h7M4 5h7M4 10h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Beweisbeschlüsse <span class="sb-badge">2</span>
+      </a>
+      <a class="sb-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 2h11a1 1 0 011 1v9a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2"/><path d="M4 6h7M4 9h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Gutachten
+      </a>
+      <a class="sb-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="3" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 7h7M4 10h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Arbeitsbereich
+      </a>
+      <a class="sb-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="5.5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 14c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Warteliste
+      </a>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">BD</div>
+        b.duezguen@intersignum.com
+      </div>
+      <a class="sb-item" href="#"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Einstellungen</a>
+      <a class="sb-item" href="#"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M5 2h2a1 1 0 011 1v1M5 12h2a1 1 0 001-1v-1M1 7.5h9M7 5l3 2.5L7 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Impressum</a>
+      <a class="sb-item" href="#"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5 7.5h5M7.5 5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Datenschutz</a>
+      <a class="sb-item" href="#"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 3h2.5a1 1 0 011 1v7a1 1 0 01-1 1H10M6 10l4-2.5L6 5M1.5 7.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Abmelden</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <a class="tb-back" href="#">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7 2L3 6l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Zurück
+      </a>
+      <span class="tb-title">Gutachten erstellen</span>
+      <span class="tb-sep">·</span>
+      <span class="tb-sub">B-Beweisbeschluss200.pdf · 3 OH 1/20</span>
+      <div class="tb-saved" id="saved-indicator" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Gerade gespeichert
+      </div>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step">
+        <div class="sc sc-active">1</div>
+        <span class="sl sl-active">Titelblatt</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="sc sc-open">2</div>
+        <span class="sl sl-open">1. Allgemeine Angaben</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="sc sc-open">3</div>
+        <span class="sl sl-open">2. Gutachterliche Beantwortung</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="sc sc-open">4</div>
+        <span class="sl sl-open">3. Zusammenfassung</span>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+      <span class="progress-label" id="prog-label">0 von 15 Feldern</span>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- Gutachter- und Gerichtsinformationen -->
+      <div class="card">
+        <div class="card-head">Gutachter- und Gerichtsinformationen</div>
+        <div class="card-body">
+          <div class="fg">
+            <label class="fl">Name des Gutachters</label>
+            <input type="text" class="fi" id="f1" placeholder="Vor- und Nachname" oninput="upd()">
+          </div>
+          <div class="fg">
+            <label class="fl">Titel</label>
+            <input type="text" class="fi" id="f2" placeholder="z.B. Dipl.-Ing., Dr." oninput="upd()">
+          </div>
+          <div class="fg full">
+            <label class="fl">Adresse des Gutachters</label>
+            <textarea class="ft" id="f3" rows="3" placeholder="Straße, PLZ Ort" oninput="upd()"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Telefon</label>
+            <input type="tel" class="fi" id="f4" placeholder="+49 ..." oninput="upd()">
+          </div>
+          <div class="fg">
+            <label class="fl">Fax</label>
+            <input type="tel" class="fi" id="f5" placeholder="+49 ..." oninput="upd()">
+          </div>
+          <div class="fg">
+            <label class="fl">Mobil</label>
+            <input type="tel" class="fi" id="f6" placeholder="+49 ..." oninput="upd()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Gericht -->
+      <div class="card">
+        <div class="card-head">Gericht</div>
+        <div class="card-body">
+          <div class="fg">
+            <label class="fl">Name des Gerichts</label>
+            <input type="text" class="fi" id="f7" placeholder="z.B. Landgericht Rottweil" oninput="upd()">
+          </div>
+          <div class="fg full">
+            <label class="fl">Gerichtsadresse</label>
+            <textarea class="ft" id="f8" rows="2" placeholder="Straße, PLZ Ort" oninput="upd()"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Geschäftsnummer</label>
+            <input type="text" class="fi" id="f9" placeholder="z.B. 3 OH 1/20" oninput="upd()">
+          </div>
+          <div class="fg">
+            <label class="fl">Projektnummer</label>
+            <input type="text" class="fi" id="f10" placeholder="Interne Projektnummer" oninput="upd()">
+          </div>
+          <div class="fg full">
+            <label class="fl">Aktenzeichen Gericht</label>
+            <input type="text" class="fi" id="f11" placeholder="Aktenzeichen" oninput="upd()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Parteien -->
+      <div class="card">
+        <div class="card-head">Parteien</div>
+        <div class="card-body">
+          <div class="fg full">
+            <label class="fl">In Sachen Antragsteller / Kläger</label>
+            <input type="text" class="fi" id="f12" placeholder="Name, Anschrift" oninput="upd()">
+          </div>
+          <div class="fg full">
+            <label class="fl">Gegen / Antragsgegner / Beklagter</label>
+            <textarea class="ft" id="f13" rows="3" placeholder="Name, Anschrift" oninput="upd()"></textarea>
+          </div>
+          <div class="fg full">
+            <label class="fl">Wegen Forderung</label>
+            <input type="text" class="fi" id="f14" placeholder="z.B. Baumängel, Schadensersatz" oninput="upd()">
+          </div>
+          <div class="fg full">
+            <label class="fl">Objekt / Adresse der Begutachtung</label>
+            <input type="text" class="fi" id="f15" placeholder="Straße, PLZ Ort" oninput="upd()">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <a class="btn-back" href="#">← Zurück</a>
+      <span class="fp" id="fp">0 von 15 Feldern ausgefüllt</span>
+      <button class="btn-next" onclick="goNext()">Weiter →</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FIELDS = ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11','f12','f13','f14','f15'];
+const TOTAL = FIELDS.length;
+
+function upd() {
+  const filled = FIELDS.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  }).length;
+  const pct = Math.round(filled / TOTAL * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = filled + ' von ' + TOTAL + ' Feldern';
+  document.getElementById('fp').textContent = filled + ' von ' + TOTAL + ' Feldern ausgefüllt';
+  if (filled > 0) {
+    document.getElementById('saved-indicator').style.display = 'flex';
+  }
+}
+
+function goNext() {
+  const filled = FIELDS.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  }).length;
+  if (filled < 5) {
+    showToast('Bitte füllen Sie mindestens die Pflichtfelder aus');
+    return;
+  }
+  window.location.href = 'allgemeine-angaben.html';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
